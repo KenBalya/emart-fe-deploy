@@ -1,11 +1,7 @@
 import React from 'react'
+import { NextPage } from 'next'
+import CartModule from '../components/module/CartModule'
 
-const page = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+const Shop: NextPage = () => <CartModule />
 
-export default page
+export default Shop

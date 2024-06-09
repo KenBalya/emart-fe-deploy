@@ -1,10 +1,10 @@
-'use client'
 import React, { useState } from 'react'
 import Card from './Card'
 import Image from 'next/image'
 import { Button } from '../../elements/Button'
 import ProductModal from './ProductModal'
 import { useAuth } from '../../context/AuthContext'
+import { toast } from 'react-toastify'; // Assuming you have react-toastify installed for toast notifications
 
 interface ShopModuleProps{
   supermarketId: string
@@ -35,11 +35,11 @@ const ShopModule: React.FC<ShopModuleProps> = ({supermarketId}) => {
 
       const data = await response.json();
       console.log('Product created:', data);
-
-      // Reload the page to show the new product
-      window.location.reload();
+      toast.success('Product created successfully');
+      
     } catch (error: any) {
       console.error('Error:', error.message);
+      toast.error('Failed to create product');
     }
   };
 

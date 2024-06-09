@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { toast } from 'react-toastify';
 
 type Product = {
     id: string;
@@ -10,11 +11,11 @@ type Product = {
     stock: number;
 };
 
-interface CardProps{
+interface CardProps {
     supermarketId: string;
 }
 
-const Card: React.FC<CardProps> = ({supermarketId}) => {
+const Card: React.FC<CardProps> = ({ supermarketId }) => {
     const [data, setData] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -40,6 +41,37 @@ const Card: React.FC<CardProps> = ({supermarketId}) => {
         }
     }, [supermarketId]);
 
+
+
+    const addToCart = async (productId: string, supermarketId: string) => {
+        try {
+            const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+            if (!token) {
+                throw new Error('User not authenticated');
+            }
+
+            const response = await fetch(`http://localhost:8082/shopping-cart/add-item?productId=${productId}&supermarketId=${supermarketId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add item to cart');
+            }
+
+            const result = await response.json();
+            toast.success('Item added to cart successfully');
+            console.log('Item added to cart:', result);
+        } catch (error: any) {
+            toast.error(`Error adding item to cart: ${error.message}`);
+            console.error('Error adding item to cart:', error);
+        }
+    };
+
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -59,7 +91,7 @@ const Card: React.FC<CardProps> = ({supermarketId}) => {
                         <Image
                             src={item.imageUrl}
                             layout="fill"
-                            objectFit="cover"
+                            objectFit="contain"
                             objectPosition="center"
                             alt="logo produk"
                         />
@@ -77,9 +109,11 @@ const Card: React.FC<CardProps> = ({supermarketId}) => {
                         </div>
                     </div>
                     <div className='flex justify-between space-x-5'>
-                        
-                        <button className="rounded-lg text-xs sm:text-sm h-8 md:h-10 py-1 w-full bg-[#21BF73] basis-1/2 md:basis-3/4"> Detail</button>
-                        
+
+                        <button className="rounded-lg text-xs sm:text-sm h-8 md:h-10 py-1 w-full bg-[#21BF73] basis-1/2 md:basis-3/4" onClick={() => addToCart(item.id, supermarketId)}>
+                            Add To Cart
+                        </button>
+
                         <div className='flex items-end justify-end gap-2 basis-1/2 md:basis-1/4 text-black text-xs sm:text-sm '>
                             Stok: {item.stock}
                         </div>

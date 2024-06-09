@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { LoginRequest, LoginResponse, User, RegisterRequest } from './interface';
+import { LoginRequest, LoginResponse, User, RegisterRequest, CreateBalanceRequest } from './interface';
 
 interface AuthContextType {
   user: User | null;
@@ -52,6 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/login');
   };
 
+  const createBalance = async (request: CreateBalanceRequest) => {
+
+  }
+
   const register = async (credentials: RegisterRequest) => {
     try {
       const response = await fetch('http://localhost:8080/api/auth/register', {
@@ -64,12 +68,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Registration failed');
       }
 
+
       const data: LoginResponse = await response.json();
+
       setUser(data.userProfile);
       setToken(data.token);
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.userProfile)); // Persist user profile
-      router.push('/dashboard'); // Redirect to dashboard or any other page after registration
+      localStorage.setItem('user', JSON.stringify(data.userProfile)); 
+      router.push('/dashboard'); 
     } catch (error) {
       console.error('Failed to register:', error);
       throw error;
@@ -88,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .then(response => response.json())
       .then(data => {
         setUser(data.userProfile);
-        localStorage.setItem('user', JSON.stringify(data.userProfile)); // Update user profile
+        localStorage.setItem('user', JSON.stringify(data.userProfile)); 
       });
     }
   }, []);

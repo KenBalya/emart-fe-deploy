@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Button } from '../../elements/Button'
 import Modal from './Modal'
 import { useAuth } from '../../context/AuthContext'
+import { toast } from 'react-toastify'
 
 const SupermarketModule = () => {
   const { token, user } = useAuth();
@@ -30,9 +31,8 @@ const SupermarketModule = () => {
 
       const data = await response.json();
       console.log('Supermarket created:', data);
+      toast.success("Supermarket created successfully");
 
-      // Reload the page to show the new supermarket
-      window.location.reload();
     } catch (error) {
       console.error('Error:', error);
     }
@@ -58,7 +58,7 @@ const SupermarketModule = () => {
           callToAction={true}
           onClick={openModal}
         >
-          Open Modal
+          Add Supermarket
         </Button>
 
         )}
